@@ -1,25 +1,39 @@
 package engine
 
 import (
-	"AccountManagement/model"
+	"AuthorizationJWT/model"
 )
 
 type (
 	// UsersRepository defines the methods that any
 	// data storage provider needs to implement to get
-	// and store greetings
+	// and store Users
 	UsersRepository interface {
-		Insert(k *model.Users) error
 		Select(k *model.Users) (*model.Users, error)
-		UpdateAll(k *model.Users) error
-		Remove(k *model.Users) error
+	}
+
+	// SysAdminRepository defines the methods that any
+	// data storage provider needs to implement to get
+	// and store SysAdmin
+	SysAdminRepository interface {
+		Select()
+	}
+
+	// RedisRepository defines the methods that any
+	// data storage provider needs to implement to get
+	// and store Redis
+	RedisRepository interface {
+		StoreToken(userData model.Users, idToken string, idTokenRefresh string) error
+		GetToken(userID string, uuidTokenAccess string) (string, error)
+		RemoveToken(idToken string) error
 	}
 
 	// StorageFactory is the interface that a storage
 	// provider needs to implement so that the engine can
 	// request repository instances as it needs them
 	StorageFactory interface {
-		// NewUsersRepository returns a storage specific
-		NewUsersRespository() UsersRepository
+		NewUsersRepository() UsersRepository
+		NewSysAdminRepository() SysAdminRepository
+		NewRedisRepository() RedisRepository
 	}
 )

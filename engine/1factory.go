@@ -7,6 +7,7 @@ type (
 	// they need to
 	EnginesFactory interface {
 		NewUsersEngine() Users
+		NewSysAdmin() SysAdmin
 	}
 
 	engineFactory struct {

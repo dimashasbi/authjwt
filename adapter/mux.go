@@ -1,7 +1,7 @@
 package adapter
 
 import (
-	"AccountManagement/engine"
+	"AuthorizationJWT/engine"
 
 	"github.com/gorilla/mux"
 

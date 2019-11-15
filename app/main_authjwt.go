@@ -1,11 +1,11 @@
 package main
 
 import (
-	"AccountManagement/adapter"
-	"AccountManagement/app/fileconfig"
-	"AccountManagement/engine"
+	"AuthorizationJWT/adapter"
+	"AuthorizationJWT/engine"
+	"AuthorizationJWT/provider/fileconfig"
 
-	"AccountManagement/provider/postgres"
+	"AuthorizationJWT/provider/postgres"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -22,6 +22,6 @@ func main() {
 	// Start application
 	adapter := adapter.Handler{}
 	adapter.InitializeServer(eng)
-	adapter.Run(":4983")
+	adapter.Run(":4985")
 
 }

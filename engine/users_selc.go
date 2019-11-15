@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"AccountManagement/model"
+	"AuthorizationJWT/model"
 	"fmt"
 	"strings"
 	"time"

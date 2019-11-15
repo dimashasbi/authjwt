@@ -1,7 +1,7 @@
 package fileconfig
 
 import (
-	"AccountManagement/model"
+	"AuthorizationJWT/model"
 	"strconv"
 
 	"github.com/spf13/viper"
@@ -11,7 +11,7 @@ import (
 func GetDBConfig() model.DBConfigurationModel {
 	// mylog.MnDebug("Load DB Configuration ")
 	viper.SetConfigType("json")
-	viper.AddConfigPath("./")
+	viper.AddConfigPath("./app/")
 	viper.SetConfigName("appconfig")
 
 	dbhost := model.DBConfigurationModel{}

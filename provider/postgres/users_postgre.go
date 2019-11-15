@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"AccountManagement/engine"
-	"AccountManagement/model"
+	"AuthorizationJWT/engine"
+	"AuthorizationJWT/model"
 
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"

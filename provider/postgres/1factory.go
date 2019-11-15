@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"AccountManagement/engine"
-	"AccountManagement/model"
+	"AuthorizationJWT/engine"
+	"AuthorizationJWT/model"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -27,7 +27,7 @@ func NewStorage(data model.DBConfigurationModel) engine.StorageFactory {
 	fmt.Println("Database Connect")
 
 	// migrate table and colomn (setting increment, null, size)
-	MigrateResult := db.AutoMigrate(&model.Users{})
+	MigrateResult := db.AutoMigrate(&model.Users{}, &model.Registry{})
 	if MigrateResult.Error != nil {
 		panic("failed  Migrate Database " + MigrateResult.Error.Error())
 	}
@@ -42,11 +42,13 @@ func NewStorage(data model.DBConfigurationModel) engine.StorageFactory {
 
 }
 
-func (c *storageFactory) NewUsersRespository() engine.UsersRepository {
+func (c *storageFactory) NewUsersRepository() engine.UsersRepository {
 	return newUsersRepository(c.db)
 }
 
-// dbsetIndex to Set Index
-func dbsetIndex(db *gorm.DB) {
-
+func (c *storageFactory) NewSysAdminRepository() engine.SysAdminRepository {
+	return newSysAdminRepostiory(c.db)
 }
+
+// dbsetIndex to Set Index
+func dbsetIndex(db *gorm.DB) {}
