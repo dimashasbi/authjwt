@@ -13,39 +13,23 @@ type (
 	// Handler structure for Application Start Server
 	Handler struct {
 		Router   *mux.Router
-		muxUsers *users
+		muxToken *token
 	}
 )
 
 // InitializeServer Application
 func (a *Handler) InitializeServer(f engine.EnginesFactory) {
 	// add Engine
-	a.muxUsers = &users{f.NewUsersEngine()}
+	a.muxToken = &token{f.NewTokenEngines()}
 	a.Router = mux.NewRouter()
 	a.SetURL()
 }
 
 // SetURL for reloading
 func (a *Handler) SetURL() {
-	a.POST("/adduser", a.AddUser)
-	a.POST("/seluser", a.SelectUser)
-	a.POST("/updtuser", a.UpdateUser)
+	a.POST("/gettoken", a.GetToken)
+	a.POST("/checktoken", a.CheckToken)
 
-}
-
-// AddUser for  Users Mux
-func (a *Handler) AddUser(w http.ResponseWriter, r *http.Request) {
-	a.muxUsers.AddUser(w, r)
-}
-
-// SelectUser for  Users Mux
-func (a *Handler) SelectUser(w http.ResponseWriter, r *http.Request) {
-	a.muxUsers.SelectUser(w, r)
-}
-
-// UpdateUser for  Users Mux
-func (a *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	a.muxUsers.UpdateUser(w, r)
 }
 
 // GET wraps the router for GET method
@@ -56,6 +40,16 @@ func (a *Handler) GET(path string, f func(w http.ResponseWriter, r *http.Request
 // POST wraps the router for POST method
 func (a *Handler) POST(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	a.Router.HandleFunc(path, f).Methods("POST")
+}
+
+// GetToken use for Get Token
+func (a *Handler) GetToken(w http.ResponseWriter, r *http.Request) {
+	a.muxToken.GetToken(w, r)
+}
+
+// CheckToken use for Check  Token
+func (a *Handler) CheckToken(w http.ResponseWriter, r *http.Request) {
+	a.muxToken.CheckToken(w, r)
 }
 
 // Run the app on it's router

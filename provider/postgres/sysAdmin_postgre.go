@@ -15,3 +15,5 @@ type (
 func newSysAdminRepostiory(db *gorm.DB) engine.UsersRepository {
 	return &sysAdminRepository{db}
 }
+
+
