@@ -13,16 +13,13 @@ type (
 	}
 
 	token struct {
-		redis  RedisRepository
-		mapper Mapper
+		key KeyRepository
 	}
 )
 
 func (f *engineFactory) NewTokenEngines() Token {
-
 	return &token{
-		redis:  f.NewRedisRepository(),
-		mapper: f.NewMapper(),
+		key: f.NewRedisRepository(),
 	}
 }
 

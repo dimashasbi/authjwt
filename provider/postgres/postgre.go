@@ -27,7 +27,7 @@ func NewStorage(data model.DBConfigurationModel) engine.StorageFactory {
 	fmt.Println("Database Connect")
 
 	// migrate table and colomn (setting increment, null, size)
-	MigrateResult := db.AutoMigrate(&model.Users{}, &model.Registry{})
+	MigrateResult := db.AutoMigrate(&model.Users{}, &model.SysAdmin{})
 	if MigrateResult.Error != nil {
 		panic("failed  Migrate Database " + MigrateResult.Error.Error())
 	}

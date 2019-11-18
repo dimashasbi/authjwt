@@ -11,7 +11,7 @@ type (
 	}
 )
 
-func (f *engineFactory) NewUsersEngine() Users {
+func (f *engineFactory) NewUsers() Users {
 	repostruc := &users{
 		repository: f.NewUsersRepository(),
 	}

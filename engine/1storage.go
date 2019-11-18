@@ -16,13 +16,13 @@ type (
 	// data storage provider needs to implement to get
 	// and store SysAdmin
 	SysAdminRepository interface {
-		Select()
+		Select(m *model.SysAdmin) (*model.SysAdmin, error)
 	}
 
-	// RedisRepository defines the methods that any
+	// KeyRepository defines the methods that any
 	// data storage provider needs to implement to get
 	// and store Redis
-	RedisRepository interface {
+	KeyRepository interface {
 		StoreToken(userData model.Users, idToken string, idTokenRefresh string) error
 		GetToken(userID string, uuidTokenAccess string) (string, error)
 		RemoveToken(idToken string) error
@@ -34,6 +34,12 @@ type (
 	StorageFactory interface {
 		NewUsersRepository() UsersRepository
 		NewSysAdminRepository() SysAdminRepository
-		NewRedisRepository() RedisRepository
+	}
+
+	// RedisFactory is the interface that a storage
+	// provider needs to implement so that the engine can
+	// request repository instances as it needs them
+	RedisFactory interface {
+		NewRedisRepository() KeyRepository
 	}
 )

@@ -17,7 +17,6 @@ type (
 )
 
 func (f *engineFactory) NewSysAdmin() SysAdmin {
-
 	return &sysAdmin{
 		repository: f.NewSysAdminRepository(),
 	}
