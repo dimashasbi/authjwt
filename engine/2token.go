@@ -26,11 +26,3 @@ func (f *engineFactory) NewTokenEngines() Token {
 func (t *token) Initialization() {
 
 }
-
-func (t *token) CheckTokenUsecase(ploadSign model.TokenCookiesJwt) interface{} {
-	return model.Properties{}
-}
-
-func (t *token) CreateTokenUsecase(userData model.Users) model.TokenCookiesJwt {
-	return model.TokenCookiesJwt{}
-}

@@ -27,7 +27,7 @@ func (a *Handler) InitializeServer(f engine.EnginesFactory) {
 
 // SetURL for reloading
 func (a *Handler) SetURL() {
-	a.POST("/gettoken", a.GetToken)
+	a.POST("/createtoken", a.CreateToken)
 	a.POST("/checktoken", a.CheckToken)
 
 }
@@ -43,8 +43,8 @@ func (a *Handler) POST(path string, f func(w http.ResponseWriter, r *http.Reques
 }
 
 // GetToken use for Get Token
-func (a *Handler) GetToken(w http.ResponseWriter, r *http.Request) {
-	a.muxToken.GetToken(w, r)
+func (a *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
+	a.muxToken.CreateToken(w, r)
 }
 
 // CheckToken use for Check  Token

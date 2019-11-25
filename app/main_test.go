@@ -1,5 +1,10 @@
 package main
 
+import (
+	"AuthorizationJWT/engine"
+	"AuthorizationJWT/provider/redis"
+)
+
 // Test Use Case not for Provider, please Remember
 
 // func TestRedisGet(T *testing.T) {
@@ -22,7 +27,16 @@ package main
 
 // 	value, err := redis.String(connRedis.Do("GET", "Artajasa.BPAYinfoBills"))
 // 	if err != nil {
-// 		T.Errorf("Error lah  %+v\n", err)
+// 		T.Errorf("Error lah  %+v\n", )
 // 	}
 // 	fmt.Printf("val redis %v", value)
 // }
+
+func TestCase(T *testing.T) {
+	rds := redis.NewRedis()
+	eng := engine.NewEngine()
+	tok := eng.NewTokenEngines()
+	tok.
+
+
+}
