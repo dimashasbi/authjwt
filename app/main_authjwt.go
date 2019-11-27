@@ -6,7 +6,7 @@ import (
 	"AuthorizationJWT/provider/fileconfig"
 
 	"AuthorizationJWT/provider/postgres"
-	"AuthorizationJWT/provider/redis"
+	"AuthorizationJWT/provider/redist"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -19,7 +19,7 @@ func main() {
 	// Connect and Migrate DB
 	db := postgres.NewStorage(dbConfig)
 	// Connect Redis
-	rds := redis.NewRedis()
+	rds := redist.NewRedis()
 	// Prepare Engine for Use Case Logic
 	eng := engine.NewEngine(db, rds)
 	// Start application

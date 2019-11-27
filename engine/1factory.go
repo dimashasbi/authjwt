@@ -10,6 +10,7 @@ type (
 		NewMapper() Mapper
 		NewUsers() Users
 		NewSysAdmin() SysAdmin
+		NewTestEngine() TestingEngineStruct
 	}
 
 	engineFactory struct {

@@ -40,6 +40,6 @@ type (
 	// provider needs to implement so that the engine can
 	// request repository instances as it needs them
 	RedisFactory interface {
-		NewRedisRepository() KeyRepository
+		NewKeyRepository() KeyRepository
 	}
 )

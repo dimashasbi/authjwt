@@ -8,7 +8,7 @@ import (
 
 // SysAdmin is model for database configuration system
 type SysAdmin struct {
-	Name  string         `gorm:"size:40;index:key_registry;unique"`
+	Name  string         `gorm:"size:40;index:key_sysadmin;unique"`
 	Value postgres.Jsonb `gorm:"size:2000"`
 }
 

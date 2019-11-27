@@ -11,7 +11,7 @@ import (
 func GetDBConfig() model.DBConfigurationModel {
 	// mylog.MnDebug("Load DB Configuration ")
 	viper.SetConfigType("json")
-	viper.AddConfigPath("./app/")
+	viper.AddConfigPath(".")
 	viper.SetConfigName("appconfig")
 
 	dbhost := model.DBConfigurationModel{}

@@ -2,6 +2,7 @@ package engine
 
 import (
 	"AuthorizationJWT/model"
+	"crypto/rsa"
 )
 
 type (
@@ -13,13 +14,21 @@ type (
 	}
 
 	token struct {
-		key KeyRepository
+		key        KeyRepository
+		user       UsersRepository
+		mapper     Mapper
+		privKeyAcc *rsa.PrivateKey
+		pubKeyAcc  *rsa.PublicKey
+		privKeyRfr *rsa.PrivateKey
+		pubKeyRfr  *rsa.PublicKey
 	}
 )
 
 func (f *engineFactory) NewTokenEngines() Token {
 	return &token{
-		key: f.NewRedisRepository(),
+		key:    f.NewKeyRepository(),
+		user:   f.NewUsersRepository(),
+		mapper: f.NewMapper(),
 	}
 }
 

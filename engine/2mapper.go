@@ -11,9 +11,7 @@ type (
 	// Mapper defines  methods that need to implement
 	Mapper interface {
 		ToJwtClaim(payload model.PayloadCookiesJWT) (jwt.MapClaims, error)
-		ToPayloadJwt(issuer string, subject string, audience string,
-			expireAt string, notBefore string, issuedAt string,
-			jwtID string) model.PayloadCookiesJWT
+		ToPayloadJwt(subject, expired, createdtime, jwtid string) model.PayloadCookiesJWT
 		MarshalToPayloadCookiesJWT(tokenParse *jwt.Token, refreshTokenParse *jwt.Token) (model.PayloadCookiesJWT, model.PayloadCookiesJWT, error)
 	}
 
@@ -37,16 +35,12 @@ func (m *mapper) ToJwtClaim(payload model.PayloadCookiesJWT) (jwt.MapClaims, err
 }
 
 //ToPayloadJwt is to mapping string to model PayloadCookiesJWT
-func (m *mapper) ToPayloadJwt(issuer string, subject string, audience string, expireAt string, notBefore string,
-	issuedAt string, jwtID string) model.PayloadCookiesJWT {
+func (m *mapper) ToPayloadJwt(subject, expired, createdtime, jwtid string) model.PayloadCookiesJWT {
 	return model.PayloadCookiesJWT{
-		Iss: issuer,
-		Sub: subject,
-		Aud: audience,
-		Exp: expireAt,
-		Nbf: notBefore,
-		Iat: issuedAt,
-		Jti: jwtID,
+		Subject:     subject,
+		Expired:     expired,
+		CreatedTime: createdtime,
+		JwtID:       jwtid,
 	}
 }
 
