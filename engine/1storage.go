@@ -24,8 +24,8 @@ type (
 	// and store Redis
 	KeyRepository interface {
 		StoreToken(userData model.Users, idToken string, idTokenRefresh string) error
-		GetToken(userID string, uuidTokenAccess string) (string, error)
-		RemoveToken(idToken string) error
+		GetToken(userID, uuidTokenAccess string) (string, error)
+		RemoveToken(userID, idToken string) error
 	}
 
 	// StorageFactory is the interface that a storage

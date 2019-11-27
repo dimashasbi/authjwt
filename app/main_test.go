@@ -20,8 +20,11 @@ type (
 		eng        engine.EnginesFactory
 		dbhand     engine.StorageFactory
 		rdshand    engine.RedisFactory
-		testEngine engine.TestingEngineStr
+		testEngine engine.TestingEngineStruct
 		adapter    adapter.Handler
+	}
+	redisStruct struct {
+		redisConn redis.Conn
 	}
 )
 
@@ -34,6 +37,8 @@ func (t *TestFactory) initializeApp() {
 	t.rdshand = redist.NewRedis()
 	// Prepare Engine for Use Case Logic
 	t.eng = engine.NewEngine(t.dbhand, t.rdshand)
+	// Set Struct for Testing
+	t.testEngine = t.eng.NewTestEngine()
 }
 
 func TestSetKeytoRedis(t *testing.T) {
@@ -42,6 +47,30 @@ func TestSetKeytoRedis(t *testing.T) {
 	Expected := map[string]string{
 		userid: idTokenAccess,
 	}
+
+	// init redis conn
+	var rds redisStruct
+	rds.initRedis()
+
+	keys := "tokenAuth:" + userid + ":"
+	_, err := rds.redisConn.Do("SET", keys, idTokenAccess)
+	if err != nil {
+		t.Errorf(" Error Set key %v+ ", err)
+	}
+
+	// check actual
+	value, err := redis.String(rds.redisConn.Do("GET", keys))
+	if err != nil {
+		t.Errorf(" Error Get key %v+ ", err)
+	}
+	Actual := map[string]string{
+		userid: value,
+	}
+
+	assert.Equal(t, Expected, Actual)
+}
+
+func (rdtest *redisStruct) initRedis() {
 	poolRedis := &redis.Pool{
 		// Maximum number of idle connections in the pool.
 		MaxIdle: 80,
@@ -57,42 +86,80 @@ func TestSetKeytoRedis(t *testing.T) {
 			return c, err
 		},
 	}
-	connRedis := poolRedis.Get()
+	rdtest.redisConn = poolRedis.Get()
+}
 
-	keys := "tokenAuth:" + userid + ":"
-	_, err := connRedis.Do("SET", keys, idTokenAccess)
+// Test Redis Get Token
+func TestGetToken(t *testing.T) {
+	// basic delcaration
+	var (
+		TestStr engine.TestingEngineStruct
+	)
+	testMain := &TestFactory{}
+	testMain.initializeApp()
+	TestStr = testMain.testEngine
+
+	var rds redisStruct
+	rds.initRedis()
+
+	// Do Test
+	JWTIDrefreshExpected := "HAMSSS"
+	usermod := model.Users{
+		ID: 1,
+	}
+	JWTIDaccess := "ADAKA"
+
+	// Set Token direct to Redis
+	key := "tokenAuth:" + string(usermod.ID) + ":" + JWTIDaccess
+	_, err := rds.redisConn.Do("SET", key, JWTIDrefreshExpected)
 	if err != nil {
 		t.Errorf(" Error Set key %v+ ", err)
 	}
 
-	// check actual
-	value, err := redis.String(connRedis.Do("GET", keys))
+	JWTIDrefreshActual, _ := TestStr.Key.GetToken(string(usermod.ID), JWTIDaccess)
+
+	assert.Equal(t, JWTIDrefreshExpected, JWTIDrefreshActual)
+
+	// clean environment
+	_, err = rds.redisConn.Do("DEL", key)
+}
+
+// Test Redis Store Token
+func TestStoreToken(t *testing.T) {
+	// basic delcaration
+	var (
+		TestStr engine.TestingEngineStruct
+	)
+	testMain := &TestFactory{}
+	testMain.initializeApp()
+	TestStr = testMain.testEngine
+
+	var rds redisStruct
+	rds.initRedis()
+
+	// Do Test
+	usermod := model.Users{
+		ID: 1,
+	}
+	JWTIDaccess := "dimashasbi"
+	JWTIDrefreshExpected := "habibiiiii"
+
+	err := TestStr.Key.StoreToken(usermod, JWTIDaccess, JWTIDrefreshExpected)
+	if err != nil {
+		t.Errorf("Error Store Token : %v+", err)
+	}
+
+	// Get Token direct to Redis
+	key := "tokenAuth:" + string(usermod.ID) + ":" + JWTIDaccess
+	JWTIDrefreshActual, err := redis.String(rds.redisConn.Do("GET", key))
 	if err != nil {
 		t.Errorf(" Error Get key %v+ ", err)
 	}
-	Actual := map[string]string{
-		userid: value,
-	}
 
-	assert.Equal(t, Expected, Actual)
+	assert.Equal(t, JWTIDrefreshExpected, JWTIDrefreshActual)
+
+	// clean environment
+	_, err = rds.redisConn.Do("DEL", key)
 }
 
-func TestGetToken(t *testing.T) {
-	var (
-		// TestEngine engine.TestingEngine
-		TestStr engine.TestingEngineStr
-	)
-
-	testMain := &TestFactory{}
-	testMain.initializeApp()
-
-	TestStr = testMain.eng.NewTestEngine()
-
-	expected := "HAHA"
-
-	userID := ""
-	ploadSign := ""
-	actual, _ := TestStr.Key.GetToken(userID, ploadSign)
-
-	assert.Equal(t, expected, actual)
-}
+// Test Redis Remove Token

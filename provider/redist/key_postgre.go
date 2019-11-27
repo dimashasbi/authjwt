@@ -18,31 +18,31 @@ func newKeyRepository(rd redis.Conn) engine.KeyRepository {
 }
 
 //StoreToken is used to store idToken & idTokenRefresh in redis
-func (r *keyRepository) StoreToken(userData model.Users, idTokenAccess string, idTokenRefresh string) error {
-	keys := "tokenAuth:" + userData.UserName + ":*" + idTokenAccess
-	_, err := r.redisConn.Do("SET", keys, idTokenRefresh)
+func (r *keyRepository) StoreToken(userData model.Users, jwtIDAccess string, jwtIDReresh string) error {
+	keys := "tokenAuth:" + string(userData.ID) + ":" + jwtIDAccess
+	_, err := r.redisConn.Do("SET", keys, jwtIDReresh)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-//GetToken by idJTI with uuid format, search on redis
-func (r *keyRepository) GetToken(userID string, ploadSign string) (string, error) {
-	// getkey := "token:" + userID + ":" + ploadSign
-	// value, err := redis.String(r.redisConn.Do("GET", getkey))
-	value, err := redis.String(r.redisConn.Do("GET", "HASBI"))
+//GetToken by idJWT with uuid format, search on redis
+func (r *keyRepository) GetToken(userID string, jwtIDAccess string) (string, error) {
+	key := "tokenAuth:" + userID + ":" + jwtIDAccess
+	jwtIDReresh, err := redis.String(r.redisConn.Do("GET", key))
 	if err != nil {
 		return "", err
 	}
-	return value, nil
+	return jwtIDReresh, nil
 }
 
 //RemoveToken from redis
-func (r *keyRepository) RemoveToken(idToken string) error {
-	// err := r.redisEngine.Expire(("token:" + idToken), 0)
-	// if err != nil {
-	// 	return err
-	// }
+func (r *keyRepository) RemoveToken(userID, jwtIDAccess string) error {
+	key := "tokenAuth:" + userID + ":" + jwtIDAccess
+	_, err := r.redisConn.Do("DEL", key)
+	if err != nil {
+		return err
+	}
 	return nil
 }
