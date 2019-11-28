@@ -213,3 +213,50 @@ func TestRemoveToken(t *testing.T) {
 
 	// clean environment = no need
 }
+
+// Test Use Case Create Token
+func TestCreateToken(t *testing.T) {
+	// basic delcaration
+	var (
+		Token engine.Token
+	)
+	testMain := &TestFactory{}
+	testMain.initializeApp()
+	// TestStr = testMain.testEngine
+	Token = testMain.eng.NewTokenEngines()
+
+	// Do the Test
+
+	// trigger by hit URL input JSON
+	inp := model.Users{
+		ID:           1,
+		UserName:     "jaquest",
+		UserFullName: "Dimas Hasbi Habibi",
+	}
+	Actual := Token.CreateTokenUsecase(inp)
+	Expected := model.TokenCookiesJwt{
+		HeaderPlusPayload: "",
+		Signature:         "",
+		RefreshToken:      "",
+	}
+
+	// 1. Check output message json
+	assert.Equal(t, Expected, Actual)
+
+	// 2. Check Token that stored at Redis
+	JWTIDaccess := ""
+	// Get Token direct to Redis
+	var rds redisStruct
+	rds.initRedis()
+	key := "tokenAuth:" + string(inp.ID) + ":" + JWTIDaccess
+	JWTIDrefreshActual, err := redis.String(rds.redisConn.Do("GET", key))
+	if err != nil {
+		t.Errorf(" Error Get key %v+ ", err)
+	}
+	JWTIDrefreshExpected := ""
+	assert.Equal(t, JWTIDrefreshExpected, JWTIDrefreshActual)
+
+	// clean environment
+	// clean redis
+
+}
