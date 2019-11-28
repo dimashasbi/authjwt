@@ -6,6 +6,8 @@ import (
 	"AuthorizationJWT/model"
 	"AuthorizationJWT/provider/fileconfig"
 	"AuthorizationJWT/provider/postgres"
+
+	// "AuthorizationJWT/provider/postgres"
 	"AuthorizationJWT/provider/redist"
 	"testing"
 
@@ -28,17 +30,26 @@ type (
 	}
 )
 
+var (
+	usingDB    = true
+	usingRedis = true
+)
+
 func (t *TestFactory) initializeApp() {
 	// Initialize Application First
 	t.dbconf = fileconfig.GetDBConfig()
+
+	// Activate 3rd Party Application
 	// Connect and Migrate DB
 	t.dbhand = postgres.NewStorage(t.dbconf)
 	// Connect to Redis
 	t.rdshand = redist.NewRedis()
+
 	// Prepare Engine for Use Case Logic
 	t.eng = engine.NewEngine(t.dbhand, t.rdshand)
 	// Set Struct for Testing
 	t.testEngine = t.eng.NewTestEngine()
+
 }
 
 func TestSetKeytoRedis(t *testing.T) {
@@ -163,3 +174,42 @@ func TestStoreToken(t *testing.T) {
 }
 
 // Test Redis Remove Token
+func TestRemoveToken(t *testing.T) {
+	// basic delcaration
+	var (
+		TestStr engine.TestingEngineStruct
+	)
+	testMain := &TestFactory{}
+	testMain.initializeApp()
+	TestStr = testMain.testEngine
+
+	var rds redisStruct
+	rds.initRedis()
+
+	// Do Test
+	usermod := model.Users{
+		ID: 1,
+	}
+	JWTIDaccess := "dimashasbi"
+	idTokenAccess := "hahah"
+
+	// set value direct to Redis
+	key := "tokenAuth:" + string(usermod.ID) + ":" + JWTIDaccess
+	_, err := rds.redisConn.Do("SET", key, idTokenAccess)
+	if err != nil {
+		t.Errorf(" Error Set key %v+ ", err)
+	}
+
+	// Remove Token direct to Redis
+	err = TestStr.Key.RemoveToken(string(usermod.ID), JWTIDaccess)
+	if err != nil {
+		t.Errorf(" Error Remove key %v+ ", err)
+	}
+
+	_, err = redis.String(rds.redisConn.Do("GET", key))
+
+	valueExpected := "redigo: nil returned"
+	assert.Equal(t, valueExpected, err.Error())
+
+	// clean environment = no need
+}
