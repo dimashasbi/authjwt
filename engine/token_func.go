@@ -22,15 +22,20 @@ func (t *token) CreateTokenUsecase(userData model.Users) model.TokenCookiesJwt {
 		timeFormat   = "1994-06-17 18:02:30"
 	)
 	timeNow := time.Now().Format(timeFormat)
-	jwtID, _ := t.newUUID()
 
 	// get from database
 	usermod := t.GetUserFromDB(&userData)
+	if !usermod.Active {
+		return model.TokenCookiesJwt{}
+	}
+
+	jwtIDAcc, _ := t.newUUID()
+	jwtIDRfr, _ := t.newUUID()
 
 	// create Access and Refresh Token
 	subject := string(userData.ID) + "." + userData.UserName
-	payloadAccessJwt := t.mapper.ToPayloadJwt(subject, "2m", timeNow, jwtID)
-	payloadRfrshJwt := t.mapper.ToPayloadJwt(subject, "2m", timeNow, jwtID)
+	payloadAccessJwt := t.mapper.ToPayloadJwt(subject, "2m", timeNow, jwtIDAcc)
+	payloadRfrshJwt := t.mapper.ToPayloadJwt(subject, "30m", timeNow, jwtIDRfr)
 
 	AccToken, RefrToken, _ := t.createToken(payloadAccessJwt, payloadRfrshJwt)
 	AccTokenArr := strings.Split(AccToken, ".")
@@ -66,9 +71,9 @@ func (t *token) newUUID() (string, error) {
 	if n != len(uuid) || err != nil {
 		return "", err
 	}
-	// variant bits; see section 4.1.1
+	// variant bits;
 	uuid[8] = uuid[8]&^0xc0 | 0x80
-	// version 4 (pseudo-random); see section 4.1.3
+	// version 4 (pseudo-random);
 	uuid[6] = uuid[6]&^0xf0 | 0x40
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
@@ -103,6 +108,7 @@ func (t *token) createToken(payloadAcc, payloadRfrs model.PayloadCookiesJWT) (st
 	if err1 != nil {
 		fmt.Printf("Error Create Token %v+", err1)
 	}
+	fmt.Printf("Token %v+", AccessToken)
 	RefreshToken, err2 := RfrToken.SignedString(t.privKeyRfr)
 	if err2 != nil {
 		fmt.Printf("Error Create Token %v+", err2)

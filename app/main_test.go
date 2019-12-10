@@ -135,6 +135,8 @@ func TestGetToken(t *testing.T) {
 	_, err = rds.redisConn.Do("DEL", key)
 }
 
+// Test Redis Get Index Token
+
 // Test Redis Store Token
 func TestStoreToken(t *testing.T) {
 	// basic delcaration
@@ -172,6 +174,8 @@ func TestStoreToken(t *testing.T) {
 	// clean environment
 	_, err = rds.redisConn.Do("DEL", key)
 }
+
+// Test Redis Set Index Token
 
 // Test Redis Remove Token
 func TestRemoveToken(t *testing.T) {
@@ -214,6 +218,10 @@ func TestRemoveToken(t *testing.T) {
 	// clean environment = no need
 }
 
+// Test Redis Delete An Token of An Index
+
+// Test Redis Delete All Index
+
 // Test Use Case Create Token
 func TestCreateToken(t *testing.T) {
 	// basic delcaration
@@ -229,7 +237,7 @@ func TestCreateToken(t *testing.T) {
 
 	// trigger by hit URL input JSON
 	inp := model.Users{
-		ID:           1,
+		ID:           3,
 		UserName:     "jaquest",
 		UserFullName: "Dimas Hasbi Habibi",
 	}
@@ -253,10 +261,46 @@ func TestCreateToken(t *testing.T) {
 	if err != nil {
 		t.Errorf(" Error Get key %v+ ", err)
 	}
+
+	// check jwt id refresh
 	JWTIDrefreshExpected := ""
 	assert.Equal(t, JWTIDrefreshExpected, JWTIDrefreshActual)
 
 	// clean environment
+
 	// clean redis
+
+}
+
+// Test Use Case Check Token
+func TestCheckToken(t *testing.T) {
+	// basic delcaration
+	var (
+		Token engine.Token
+	)
+	testMain := &TestFactory{}
+	testMain.initializeApp()
+	// TestStr = testMain.testEngine
+	Token = testMain.eng.NewTokenEngines()
+
+	// Do the Test
+
+	// trigger by hit URL input JSON
+	inp := model.TokenCookiesJwt{
+		HeaderPlusPayload: "",
+		Signature:         "",
+		RefreshToken:      "",
+	}
+	Actual := Token.CheckTokenUsecase(inp)
+	Expected := model.TokenCookiesJwt{
+		HeaderPlusPayload: "",
+		Signature:         "",
+		RefreshToken:      "",
+	}
+
+	// what test
+	assert.Equal(t, Expected, Actual)
+
+	// clean environment
 
 }
