@@ -7,7 +7,6 @@ type (
 	// they need to
 	EnginesFactory interface {
 		NewTokenEngines() Token
-		NewMapper() Mapper
 		NewUsers() Users
 		NewSysAdmin() SysAdmin
 		NewTestEngine() TestingEngineStruct

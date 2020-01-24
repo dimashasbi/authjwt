@@ -43,6 +43,7 @@ func (s users) SelectUsers(h *SelectUserReq) *SelectUserResp {
 		"",
 		"",
 		0,
+		0,
 		0, // login fail count
 		time.Time{},
 		false, // active

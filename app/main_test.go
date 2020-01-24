@@ -52,6 +52,21 @@ func (t *TestFactory) initializeApp() {
 
 }
 
+func (t *TestFactory) initializeRedis() {
+	// Initialize Application First
+	t.dbconf = fileconfig.GetDBConfig()
+
+	// Activate 3rd Party Application
+	// Connect to Redis
+	t.rdshand = redist.NewRedis()
+
+	// Prepare Engine for Use Case Logic
+	t.eng = engine.NewEngine(t.dbhand, t.rdshand)
+	// Set Struct for Testing
+	t.testEngine = t.eng.NewTestEngine()
+
+}
+
 func TestSetKeytoRedis(t *testing.T) {
 	userid := "hasbi"
 	idTokenAccess := "ilmlzlaksjd"
@@ -107,7 +122,7 @@ func TestGetToken(t *testing.T) {
 		TestStr engine.TestingEngineStruct
 	)
 	testMain := &TestFactory{}
-	testMain.initializeApp()
+	testMain.initializeRedis()
 	TestStr = testMain.testEngine
 
 	var rds redisStruct
@@ -135,8 +150,7 @@ func TestGetToken(t *testing.T) {
 	_, err = rds.redisConn.Do("DEL", key)
 }
 
-// Test Redis Get Index Token
-
+// Test Redis Get Index Token ?
 // Test Redis Store Token
 func TestStoreToken(t *testing.T) {
 	// basic delcaration
@@ -144,7 +158,7 @@ func TestStoreToken(t *testing.T) {
 		TestStr engine.TestingEngineStruct
 	)
 	testMain := &TestFactory{}
-	testMain.initializeApp()
+	testMain.initializeRedis()
 	TestStr = testMain.testEngine
 
 	var rds redisStruct
@@ -175,8 +189,7 @@ func TestStoreToken(t *testing.T) {
 	_, err = rds.redisConn.Do("DEL", key)
 }
 
-// Test Redis Set Index Token
-
+// Test Redis Set Index Token ?
 // Test Redis Remove Token
 func TestRemoveToken(t *testing.T) {
 	// basic delcaration
@@ -184,7 +197,7 @@ func TestRemoveToken(t *testing.T) {
 		TestStr engine.TestingEngineStruct
 	)
 	testMain := &TestFactory{}
-	testMain.initializeApp()
+	testMain.initializeRedis()
 	TestStr = testMain.testEngine
 
 	var rds redisStruct
@@ -218,9 +231,8 @@ func TestRemoveToken(t *testing.T) {
 	// clean environment = no need
 }
 
-// Test Redis Delete An Token of An Index
-
-// Test Redis Delete All Index
+// Test Redis Delete An Token of An Index ?
+// Test Redis Delete All Index ?
 
 // Test Use Case Create Token
 func TestCreateToken(t *testing.T) {
@@ -229,7 +241,7 @@ func TestCreateToken(t *testing.T) {
 		Token engine.Token
 	)
 	testMain := &TestFactory{}
-	testMain.initializeApp()
+	testMain.initializeRedis()
 	// TestStr = testMain.testEngine
 	Token = testMain.eng.NewTokenEngines()
 
@@ -279,7 +291,7 @@ func TestCheckToken(t *testing.T) {
 		Token engine.Token
 	)
 	testMain := &TestFactory{}
-	testMain.initializeApp()
+	testMain.initializeRedis()
 	// TestStr = testMain.testEngine
 	Token = testMain.eng.NewTokenEngines()
 

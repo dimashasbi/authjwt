@@ -1,4 +1,4 @@
-package engine
+package mapperJWT
 
 import (
 	"AuthorizationJWT/model"
@@ -19,7 +19,8 @@ type (
 	}
 )
 
-func (f *engineFactory) NewMapper() Mapper {
+// NewMapper for Mapper function
+func NewMapper() Mapper {
 	return &mapper{}
 }
 

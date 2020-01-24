@@ -26,12 +26,22 @@ func (s usersRepository) Insert(k *model.Users) error {
 	return nil
 }
 
+// select a row of users by username or id
 func (s usersRepository) Select(k *model.Users) (*model.Users, error) {
-	result := s.session.Where("user_name = ?", k.UserName).First(&k)
-	if result.Error != nil {
-		return k, errors.Errorf("Error Select Users : %v", result.Error)
+	if k.UserName != "" {
+		result := s.session.Where("user_name = ?", k.UserName).First(&k)
+		if result.Error != nil {
+			return k, errors.Errorf("Error Select Users : %v", result.Error)
+		}
+		return k, nil
+	} else if k.ID != 0 {
+		result := s.session.Where("id = ?", k.ID).First(&k)
+		if result.Error != nil {
+			return k, errors.Errorf("Error Select Users : %v", result.Error)
+		}
+		return k, nil
 	}
-	return k, nil
+	return &model.Users{}, nil
 }
 
 func (s usersRepository) UpdateAll(m *model.Users) error {

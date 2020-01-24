@@ -18,27 +18,10 @@ func newKeyRepository(rd redis.Conn) engine.KeyRepository {
 }
 
 // StoreToken is used to store idTokenAccess & idTokenRefresh in redis
-func (r *keyRepository) StoreToken(userData model.Users, jwtIDAccess string, jwtIDReresh string) error {
-	keys := "tokenAuth:" + string(userData.ID) + ":" + jwtIDAccess
+func (r *keyRepository) StoreToken(ID int, jwtIDAccess string, jwtIDReresh string) error {
+	keys := "tokenAuth:" + string(ID) + ":" + jwtIDAccess
 	// set key
 	_, err := r.redisConn.Do("SET", keys, jwtIDReresh)
-	if err != nil {
-		return err
-	}
-	// add into index
-	keysIndex := "tokenAuth:" + string(userData.ID) + ":"
-	_, err = r.redisConn.Do("SADD", keysIndex, jwtIDAccess)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// StoreToken is used to store idTokenAccess & idTokenRefresh in redis
-func (r *keyRepository) AddIndex(userData model.Users, jwtIDAccess string, jwtIDReresh string) error {
-	// add into index
-	keysIndex := "tokenAuth:" + string(userData.ID) + ":"
-	_, err := r.redisConn.Do("SADD", keysIndex, jwtIDAccess)
 	if err != nil {
 		return err
 	}
@@ -55,6 +38,17 @@ func (r *keyRepository) GetToken(userID string, jwtIDAccess string) (string, err
 	return jwtIDReresh, nil
 }
 
+// RemoveToken from redis
+func (r *keyRepository) RemoveToken(userID, jwtIDAccess string) error {
+	key := "tokenAuth:" + userID + ":" + jwtIDAccess
+	// delete key
+	_, err := r.redisConn.Do("DEL", key)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetToken by idJWT with uuid format, search on redis
 func (r *keyRepository) ListToken(userID string, jwtIDAccess string) ([]string, error) {
 	keyind := "tokenAuth:" + userID + ":"
@@ -69,11 +63,11 @@ func (r *keyRepository) ListToken(userID string, jwtIDAccess string) ([]string, 
 	return ListToken, nil
 }
 
-// RemoveToken from redis
-func (r *keyRepository) RemoveToken(userID, jwtIDAccess string) error {
-	key := "tokenAuth:" + userID + ":" + jwtIDAccess
-	// delete key
-	_, err := r.redisConn.Do("DEL", key)
+// StoreToken is used to store idTokenAccess & idTokenRefresh in redis
+func (r *keyRepository) AddIndex(userData model.Users, jwtIDAccess string, jwtIDReresh string) error {
+	// add into index
+	keysIndex := "tokenAuth:" + string(userData.ID) + ":"
+	_, err := r.redisConn.Do("SADD", keysIndex, jwtIDAccess)
 	if err != nil {
 		return err
 	}

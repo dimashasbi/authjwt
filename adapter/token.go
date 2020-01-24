@@ -2,7 +2,6 @@ package adapter
 
 import (
 	"AuthorizationJWT/engine"
-	"AuthorizationJWT/model"
 	"encoding/json"
 	"net/http"
 )
@@ -15,7 +14,7 @@ type (
 
 // GetToken use for Get Token
 func (t *token) CreateToken(w http.ResponseWriter, r *http.Request) {
-	mod := model.Users{}
+	mod := &engine.CreateTokenReq{}
 	json.NewDecoder(r.Body).Decode(&mod)
 
 	result := t.CreateTokenUsecase(mod)
@@ -27,7 +26,7 @@ func (t *token) CreateToken(w http.ResponseWriter, r *http.Request) {
 
 // CheckToken use for Check Token
 func (t *token) CheckToken(w http.ResponseWriter, r *http.Request) {
-	mod := model.TokenCookiesJwt{}
+	mod := &engine.CheckTokenReq{}
 	json.NewDecoder(r.Body).Decode(&mod)
 
 	result := t.CheckTokenUsecase(mod)

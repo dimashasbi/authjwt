@@ -23,7 +23,7 @@ type (
 	// data storage provider needs to implement to get
 	// and store Redis
 	KeyRepository interface {
-		StoreToken(userData model.Users, idToken string, idTokenRefresh string) error
+		StoreToken(ID int, uuidToken string, uuidTokenRefresh string) error
 		GetToken(userID, uuidTokenAccess string) (string, error)
 		RemoveToken(userID, idToken string) error
 	}
